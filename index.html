@@ -535,6 +535,55 @@
             animation: finalPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
             transform-origin: center center;
         }
+
+                /* Professional Verified Status Box */
+        .verified-badge-container {
+            background: #f0fdf4; /* Very light green */
+            border: 1px solid #bbf7d0;
+            border-left: 5px solid #22c55e; /* Sidebar accent */
+            border-radius: 8px;
+            padding: 24px 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        .verified-icon-circle {
+            width: 40px;
+            height: 40px;
+            background: #22c55e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+        }
+
+        .verified-status-title {
+            font-family: var(--font-head);
+            color: #166534;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .verified-status-desc {
+            color: #15803d;
+            font-size: 13px;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
     </style>
 </head>
 <body>
@@ -698,44 +747,42 @@
         // 2. INITIALIZATION
         // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            // Populate UI
-            document.getElementById('disp_ref').textContent = warrantyData.ref;
-            document.getElementById('disp_client').textContent = warrantyData.client;
-            document.getElementById('disp_company').textContent = warrantyData.company;
-            document.getElementById('disp_period').textContent = warrantyData.period;
-            
-            // New Date Fields
-            document.getElementById('disp_start').textContent = warrantyData.startDate;
-            document.getElementById('disp_end').textContent = warrantyData.endDate;
-            
-            document.getElementById('overlay_client_text').textContent = `Claimant: ${warrantyData.client}`;
+    // 1. Data populate (Wahi rahega)
+    document.getElementById('disp_ref').textContent = warrantyData.ref;
+    document.getElementById('disp_client').textContent = warrantyData.client;
+    document.getElementById('disp_company').textContent = warrantyData.company;
+    document.getElementById('disp_period').textContent = warrantyData.period;
+    document.getElementById('disp_start').textContent = warrantyData.startDate;
+    document.getElementById('disp_end').textContent = warrantyData.endDate;
 
-            // Check LocalStorage (Agar pehle se claim ho chuka hai)
-            const storageKey = `warranty_verified_${warrantyData.ref}`;
-            const isVerified = localStorage.getItem(storageKey);
+    // 2. CHECK: Kya ye pehle se verified hai?
+    const storageKey = `warranty_verified_${warrantyData.ref}`;
+    
+    if (localStorage.getItem(storageKey) === 'true') {
+        const btnVerify = document.getElementById('btnVerify');
+        const statusBox = document.getElementById('statusMessage');
 
-            if (isVerified) {
-                // 1. Button Gayab karo
-                btnVerify.style.display = 'none';
-
-                // 2. Status Box ko "Success Card" jaisa dikhao
-                statusBox.style.display = 'block';
-                // Green Colors manually set kar rahe hain taaki pakka Green dikhe
-                statusBox.style.background = "#dcfce7"; 
-                statusBox.style.color = "#15803d";
-                statusBox.style.border = "1px solid #22c55e";
-                statusBox.style.padding = "20px";
-                
-                // Message with Checkmark
-                statusBox.innerHTML = `
-                    <div style="font-size: 24px; margin-bottom: 10px;">✅</div>
-                    <div style="font-size: 16px; font-weight: 700;">WARRANTY ACTIVE</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
-                        Verified on ${new Date().toLocaleDateString()}
-                    </div>
-                `;
-            }
-        });
+        // Button hatao
+        btnVerify.style.display = 'none';
+        
+        // Professional HTML Structure
+        statusBox.style.display = 'block';
+        statusBox.innerHTML = `
+            <div class="verified-badge-container">
+                <div class="verified-icon-circle">✓</div>
+                <div class="verified-status-title">Warranty Active</div>
+                <div class="verified-status-desc">
+                    This reference (<b>${warrantyData.ref}</b>) is already <br> verified and registered in our system.
+                </div>
+            </div>
+        `;
+        
+        // Purani inline border/background clear karo agar koi ho
+        statusBox.style.background = "transparent";
+        statusBox.style.border = "none";
+        statusBox.style.padding = "0";
+    }
+});
 
         // ==========================================
         // 3. VERIFICATION LOGIC
@@ -747,115 +794,82 @@
         // 3. NOTEBOOK & PEN VERIFICATION LOGIC
         // ==========================================
         function handleVerification() {
-            // --- ELEMENTS SELECT KARNA ---
-            const btnVerify = document.getElementById('btnVerify');
-            const mainCard = document.querySelector('.verify-card'); // Pura Card
-            const overlay = document.getElementById('successOverlay'); // Notebook Scene
-            const flipper = document.getElementById('notebookFlipper'); // 3D Flipper
-            const pen = document.getElementById('penActor'); // Pen
-            const writingContainer = document.querySelector('.paper-content'); // Ink Area
-            const statusBox = document.getElementById('statusMessage'); // Status Message Area
+    const btnVerify = document.getElementById('btnVerify');
+    const mainCard = document.querySelector('.verify-card');
+    const overlay = document.getElementById('successOverlay');
+    const flipper = document.getElementById('notebookFlipper');
+    const pen = document.getElementById('penActor');
+    const writingContainer = document.querySelector('.paper-content');
+    const statusBox = document.getElementById('statusMessage');
 
-            // --- STEP 1: CARD GAYAB KARO ---
-            btnVerify.disabled = true;
-            btnVerify.innerHTML = "Processing...";
-            
-            // Card Fade Out Class lagao
-            mainCard.classList.add('card-faded-out');
+    // --- STEP 0: SABSE PEHLE SAVE KARO (Anti-Cheat) ---
+    const storageKey = `warranty_verified_${warrantyData.ref}`;
+    localStorage.setItem(storageKey, 'true'); // Turant save!
 
-            // --- STEP 2: NOTEBOOK SCENE LAO (600ms baad) ---
+    // --- STEP 1: CARD KO HATAO ---
+    btnVerify.disabled = true;
+    btnVerify.innerHTML = "Processing...";
+    mainCard.classList.add('card-faded-out');
+
+    // --- STEP 2: ANIMATION START ---
+    setTimeout(() => {
+        overlay.classList.add('active');
+
+        setTimeout(() => {
+            pen.classList.add('sequence-start');
+
             setTimeout(() => {
-                // Overlay show karo
-                overlay.classList.add('active');
+                pen.classList.add('sequence-write');
+                writingContainer.classList.add('writing-now');
 
-                // 2.1 Pen Aaya
                 setTimeout(() => {
-                    pen.classList.add('sequence-start');
-
-                    // 2.2 Writing Start hui
+                    pen.classList.add('hide-pen'); 
+                    
                     setTimeout(() => {
-                        pen.classList.add('sequence-write');
-                        writingContainer.classList.add('writing-now');
+                        flipper.classList.add('do-flip');
+                        // Ab yahan dobara save karne ki zaroorat nahi
+                    }, 300);
 
-                        // 2.3 Writing Khatam + Flip Logic
-                        setTimeout(() => {
-                            // Pen ko chupao (Flip se pehle)
-                            pen.classList.add('hide-pen'); 
-                            
-                            // FLIP KARO (Notebook palat jayegi)
-                            setTimeout(() => {
-                                flipper.classList.add('do-flip');
-                                
-                                // LocalStorage mein save kar lo
-                                const storageKey = `warranty_verified_${warrantyData.ref}`;
-                                localStorage.setItem(storageKey, 'true');
-                                
-                            }, 300); // Pen hatne ke turant baad flip
+                }, 2000); 
 
-                        }, 2000); // 2 second likhne mein lagega
+            }, 800);
 
-                    }, 800); // Pen aane ke baad wait
+        }, 500);
 
-                }, 500); // Overlay aane ke baad wait
+        // --- STEP 3: FINAL UI UPDATE ---
+        setTimeout(() => {
+            triggerEmail();
+            overlay.classList.remove('active');
+            
+            // UI Update
+            btnVerify.style.display = 'none';
+            statusBox.style.display = 'block';
+            statusBox.innerHTML = `
+                <div style="font-size: 24px; margin-bottom: 10px;">✅</div>
+                <div style="font-size: 16px; font-weight: 700;">WARRANTY ACTIVE</div>
+                <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
+                    Verified on ${new Date().toLocaleDateString()}
+                </div>
+            `;
+            statusBox.style.background = "#dcfce7"; 
+            statusBox.style.color = "#15803d";
+            statusBox.style.border = "1px solid #22c55e";
+            statusBox.style.padding = "20px";
 
-                // --- STEP 3: FINAL - CARD WAPAS LAO (Sab hone ke baad) ---
-                // Total Animation Time: approx 6.5 seconds
-                setTimeout(() => {
-                    // Email bhejo (Background mein)
-                    triggerEmail();
-
-                    // 3.1 Notebook ko hatao
-                    overlay.classList.remove('active');
-                    
-                    // 3.2 Card ka CONTENT badal do (Jab wo chupa hua hai)
-                    // Button hatao
-                    btnVerify.style.display = 'none';
-                    
-                    // Status Message dikhao (Updated)
-                    statusBox.style.display = 'block';
-                    statusBox.innerHTML = "✅ Warranty Successfully Verified & Claimed.";
-                    statusBox.classList.add('status-closed'); // Green/Grey styling
-                    statusBox.style.color = "#15803d"; // Success Green Color
-                    statusBox.style.background = "#dcfce7";
-                    statusBox.style.borderColor = "#22c55e";
-
-                    // 3.3 Main Card ko WAPAS LAO (Fade In + POP Effect + CELEBRATION)
             setTimeout(() => {
                 mainCard.classList.remove('card-faded-out');
                 mainCard.classList.add('card-success-pop'); 
                 
-                // --- NEW ADDITIONS ---
-                
-                // 1. Mobile Vibration (Haptic Feedback)
-                if (navigator.vibrate) {
-                    navigator.vibrate([100, 50, 100]); // "Bzz-bzz" effect
-                }
-
-                // 2. Confetti Blast (Celebration)
-                var count = 200;
-                var defaults = {
-                    origin: { y: 0.7 }
-                };
-
-                function fire(particleRatio, opts) {
-                    confetti(Object.assign({}, defaults, opts, {
-                        particleCount: Math.floor(count * particleRatio)
-                    }));
-                }
-
-                fire(0.25, { spread: 26, startVelocity: 55 });
-                fire(0.2, { spread: 60 });
-                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-                fire(0.1, { spread: 120, startVelocity: 45 });
-                // ---------------------
+                // Celebration
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
             }, 500);
 
-                }, 6500); // Pura show khatam hone ka time
+        }, 6500); 
 
-            }, 600); // Card gayab hone ka wait
-        }
+    }, 600);
+}
         // ==========================================
         // 4. EMAIL TRIGGER
         // ==========================================
