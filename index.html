@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Verification - Innolab Instruments</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* =========================================
+           PREMIUM DESIGN VARIABLES
+           ========================================= */
+        :root {
+            --primary: #0f172a;       /* Deepest Navy */
+            --accent: #2563eb;        /* Trust Blue */
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            
+            --font-head: 'Montserrat', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+            
+            /* Elevation Shadows */
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================
+           CARD COMPONENT
+           ========================================= */
+        .verify-card {
+            background: var(--card-surface);
+            width: 100%;
+            max-width: 440px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+            position: relative;
+        }
+
+        /* Top Accent Line (Bank Style) */
+        .verify-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        /* Header */
+        .card-header {
+            background: white;
+            padding: 40px 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo-img {
+            max-width: 160px;
+            height: auto;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+        }
+
+        .company-name {
+            font-family: var(--font-head);
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .page-title {
+            font-family: var(--font-head);
+            font-size: 20px;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        /* Content Body */
+        .card-body {
+            padding: 30px;
+            background: #fff;
+        }
+
+        /* Data Rows */
+        .data-group { margin-bottom: 30px; }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-light); /* Dashed line for receipt feel */
+        }
+
+        .data-row:last-child { border-bottom: none; }
+
+        .label {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            flex: 1;
+        }
+
+        .value {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+            flex: 1.5;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        /* The Badge Style for Reference No */
+        .highlight {
+            background: #eff6ff; /* Light Blue tint */
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 12px;
+            border: 1px solid #dbeafe;
+            display: inline-block;
+        }
+
+        /* Action Area */
+        .action-area { margin-top: 25px; }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-head);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-confirm:disabled {
+            background: #cbd5e1;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Status Messages */
+        .status-box {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: none;
+            line-height: 1.5;
+        }
+        .status-error { background-color: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+        .status-closed { background-color: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+
+        /* Animation Overlay (Keep Existing logic, just style tweaks) */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98); z-index: 2000;
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .overlay.active { display: flex; opacity: 1; }
+        
+        .success-icon-container { width: 90px; height: 90px; margin-bottom: 25px; position: relative; }
+        
+        /* SVG Circle */
+        .success-circle { width: 90px; height: 90px; fill: none; stroke: #10b981; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transform: rotate(-90deg); transform-origin: center; }
+        .overlay.animate .success-circle { animation: drawCircle 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        
+        /* SVG Checkmark */
+        .success-tick { width: 40px; height: 28px; fill: none; stroke: #10b981; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 60; stroke-dashoffset: 60; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .overlay.animate .success-tick { animation: drawTick 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards; }
+
+        @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+        @keyframes drawTick { to { stroke-dashoffset: 0; } }
+
+        .success-content { text-align: center; opacity: 0; transform: translateY(15px); transition: all 0.8s ease; }
+        .overlay.show-text .success-content { opacity: 1; transform: translateY(0); }
+        .success-heading { font-family: var(--font-head); font-size: 22px; color: var(--primary); margin: 0 0 10px 0; font-weight: 700; }
+        .success-sub { font-size: 14px; color: var(--text-muted); }
+        .client-ref { margin-top: 10px; font-size: 13px; color: var(--text-muted); letter-spacing: 0.5px; }
+
+        @media (max-width: 480px) {
+            .verify-card { box-shadow: none; border: none; background: transparent; }
+            .card-header { background: white; border-radius: 12px 12px 0 0; border-bottom: 1px dashed #eee; }
+            .card-body { background: white; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+            body { padding: 10px; background: #f1f5f9; }
+        }
+/* =========================================
+           FIXED INTRO ANIMATION (Responsive)
+           ========================================= */
+        .intro-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease-out;
+        }
+
+        .intro-content {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .intro-logo {
+            /* PC Default Size - Bada kar diya hai */
+            width: 300px; 
+            max-width: 80%; /* Mobile ke liye safety limit */
+            height: auto;
+            opacity: 0;
+            transform: scale(0.8);
+            margin-bottom: 20px;
+            /* Animation */
+            animation: logoReveal 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .intro-text {
+            font-family: var(--font-head);
+            font-size: 18px; /* Text thoda bada kiya */
+            font-weight: 700;
+            color: var(--primary);
+            opacity: 0;
+            transform: translateY(15px);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* MOBILE SPECIFIC SETTINGS */
+        @media (max-width: 480px) {
+            .intro-logo {
+                width: 65%; /* Mobile screen ka 65% hissa lega */
+            }
+            .intro-text {
+                font-size: 14px; /* Mobile pe text thoda chota */
+            }
+        }
+
+        /* 1. Logo Animation sequence */
+        @keyframes logoReveal {
+            0% { opacity: 0; transform: scale(0.8); }
+            30% { opacity: 1; transform: scale(1.1); } /* Thoda Zoom in */
+            100% { opacity: 1; transform: scale(1); }   /* Normal position */
+        }
+
+        /* 2. Text Reveal Class (JS se trigger hoga) */
+        .intro-text.active {
+            animation: textFadeIn 1s ease forwards;
+        }
+
+        @keyframes textFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 3. Main Card Slide Up Animation */
+        /* 3. Main Card "Kheench ke laana" (Fetch Effect) */
+        .verify-card {
+            opacity: 0; /* Shuru mein Gayab rahega (IMPORTANT) */
+            transform: translateY(80px); /* Neeche rahega */
+        }
+
+        /* Jab JS bolega tab yeh class lagegi aur card upar aayega */
+        .verify-card.animate-entry {
+            animation: cardFetch 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes cardFetch {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+/* =========================================
+           3D FLIP NOTEBOOK STYLES
+           ========================================= */
+        
+        /* Scene Setup */
+        .scene-container {
+            width: 360px; height: 240px;
+            perspective: 1200px; /* 3D depth */
+            position: relative;
+        }
+
+        /* The Flipper Container */
+        .notebook-paper-3d {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d; /* Important for 3D */
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Smooth Flip with bounce */
+        }
+
+        /* Trigger for Flip */
+        .notebook-paper-3d.do-flip {
+            transform: rotateY(180deg);
+        }
+
+        /* Common Styles for Both Sides */
+        .paper-side {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            backface-visibility: hidden; /* Hide back when flipped */
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            background-color: #fafaf9;
+            overflow: hidden;
+        }
+
+        /* --- FRONT SIDE DESIGN --- */
+        .paper-front {
+            z-index: 2;
+            background-image: linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.02) 100%);
+            background-size: 100% 20px;
+            padding: 30px 20px 20px 50px;
+        }
+
+        /* --- BACK SIDE DESIGN (Verified) --- */
+        .paper-back {
+            transform: rotateY(180deg); /* Pehle se ulta rakho */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); /* Light Green BG */
+            border: 2px solid #22c55e;
+        }
+
+        .verified-content { text-align: center; }
+
+        .check-circle {
+            width: 60px; height: 60px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px auto;
+            color: white;
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+            transform: scale(0);
+        }
+        
+        /* Animate check inside flip */
+        .notebook-paper-3d.do-flip .check-circle {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s forwards;
+        }
+
+        @keyframes popIn { to { transform: scale(1); } }
+
+        .verified-title {
+            font-family: var(--font-head); font-weight: 800; font-size: 18px;
+            color: #15803d; letter-spacing: 1px; margin-bottom: 5px;
+        }
+        .verified-sub { font-size: 13px; color: #166534; font-weight: 600; }
+
+        /* ELEMENTS FROM OLD CSS (Spiral, Lines, SVG) */
+        .spiral-binding {
+            position: absolute; top: 10px; bottom: 10px; left: 15px; width: 20px; 
+            background: repeating-linear-gradient(-45deg, transparent, transparent 8px, #94a3b8 8px, #cbd5e1 10px, #64748b 11px, transparent 11px, transparent 25px);
+        }
+        .document-body { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; opacity: 0.6; }
+        .text-line { height: 6px; background: #cbd5e1; border-radius: 4px; }
+        .width-100 { width: 100%; } .width-90 { width: 90%; } .width-80 { width: 80%; }
+        
+        .paper-content {
+            position: absolute; bottom: 25px; right: 30px;
+            width: 140px; height: 50px;
+        }
+        .writing-svg { width: 100%; height: 100%; display: block; }
+        #write-path { stroke-dasharray: 145; stroke-dashoffset: 145; stroke: #0f172a; stroke-width: 2px; }
+        .writing-now #write-path { animation: writeLine 2s linear forwards; }
+        @keyframes writeLine { to { stroke-dashoffset: 0; } }
+
+        /* --- PEN ACTOR --- */
+        .pen-actor {
+            position: absolute;
+            top: 115px; left: 245px; /* Start Pos */
+            width: 10px; height: 120px;
+            transform-origin: bottom center;
+            transform: rotate(25deg);
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        /* Hide Pen during flip */
+        .pen-actor.hide-pen { opacity: 0 !important; }
+
+        .pen-body { background: linear-gradient(90deg, #1e293b, #334155); height: 88%; border-radius: 5px 5px 0 0; }
+        .pen-tip {
+            width: 0; height: 0;
+            border-left: 5px solid transparent; border-right: 5px solid transparent;
+            border-top: 15px solid #e2e8f0; position: relative;
+        }
+        .pen-tip::after {
+            content: ''; position: absolute; top: -15px; left: -2px;
+            border-left: 2px solid transparent; border-right: 2px solid transparent; border-top: 5px solid #1e293b;
+        }
+
+        /* Pen Animation Classes */
+        .pen-actor.sequence-start { opacity: 1; transition: all 0.8s; }
+        .pen-actor.sequence-write { animation: penWritingMove 2s linear forwards; }
+        
+        @keyframes penWritingMove {
+            0% { left: 245px; transform: rotate(25deg) translateY(0); }
+            20% { transform: rotate(15deg) translateY(5px); } 
+            40% { transform: rotate(35deg) translateY(0); } 
+            60% { transform: rotate(15deg) translateY(5px); }
+            80% { transform: rotate(35deg) translateY(0); }
+            100% { left: 375px; transform: rotate(25deg) translateY(-5px); }
+        }
+
+        /* =========================================
+           CARD HIDE/SHOW ANIMATION
+           ========================================= */
+        .verify-card {
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Jab Card ko chhupana ho */
+        .verify-card.card-hidden {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            pointer-events: none; /* Click na ho sake */
+        }
+
+        /* =========================================
+           STEP-BY-STEP FLOW ANIMATIONS
+           ========================================= */
+        
+        /* 1. Card Transition Settings */
+        .verify-card {
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* 2. Jab Card Gayab Hoga (Hide State) */
+        .verify-card.card-faded-out {
+            opacity: 0 !important;
+            transform: translateY(30px) scale(0.9) !important;
+            pointer-events: none; /* Click disable */
+        }
+
+        /* 3. Notebook Overlay Position (Screen ke beech mein) */
+        .notebook-overlay {
+            position: fixed; /* Zaroori hai taaki card ke upar aaye */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(241, 245, 249, 0.95); /* Background taaki piche ka chup jaye */
+            z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            
+            /* Shuru mein chupa rahega */
+            opacity: 0; 
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Jab Notebook Active Hogi */
+        .notebook-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+                /* =========================================
+        5. FINAL SUCCESS POP ANIMATION (NEW)
+        ========================================= */
+        @keyframes finalPopIn {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8) translateY(20px); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.03) translateY(0); /* Thoda bada hoga (Bounce) */
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); /* Normal position */
+            }
+        }
+
+        /* Ye class JS se lagayenge */
+        .card-success-pop {
+            animation: finalPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+            transform-origin: center center;
+        }
+    </style>
+</head>
+<body>
+    <div id="intro-screen" class="intro-overlay">
+    <div class="intro-content">
+        <img src="./logo.png" alt="Logo" class="intro-logo">
+        <div class="intro-text">Welcome to Innolab Instruments</div>
+    </div>
+</div>
+    <div class="verify-card">
+        <!-- HEADER -->
+        <header class="card-header">
+            <img src="./logo.png" alt="Innolab Logo" class="logo-img" onerror="this.style.display='none'">
+            <span class="company-name">Innolab Instruments</span>
+            <h1 class="page-title">Warranty Claim Verification</h1>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="card-body">
+            
+            <!-- ALREADY VERIFIED / EXPIRED MESSAGE -->
+            <div id="statusMessage" class="status-box"></div>
+
+            <!-- DATA DISPLAY -->
+            <div class="data-group">
+                <div class="data-row">
+                    <span class="label">Reference No</span>
+                    <span class="value highlight" id="disp_ref">--</span>
+                </div>
+                <!-- 2. UPDATED LABELS -->
+                <div class="data-row">
+                    <span class="label">Claimant Name</span>
+                    <span class="value" id="disp_client">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">Organization</span>
+                    <span class="value" id="disp_company">--</span>
+                </div>
+                <!-- 1. EQUIPMENT REMOVED -->
+                
+                <div class="data-row">
+                    <span class="label">Warranty Period</span>
+                    <span class="value" id="disp_period">--</span>
+                </div>
+                <!-- 3. DATE FIELDS ADDED -->
+                <div class="data-row">
+                    <span class="label">Start Date</span>
+                    <span class="value" id="disp_start">--</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">End Date</span>
+                    <span class="value" id="disp_end">--</span>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTON -->
+            <div class="action-area">
+                <button id="btnVerify" class="btn-confirm" onclick="handleVerification()">
+                    Confirm Warranty
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. PREMIUM ANIMATION OVERLAY -->
+    <div id="successOverlay" class="notebook-overlay">
+        <div class="scene-container">
+            
+            <div id="notebookFlipper" class="notebook-paper-3d">
+                
+                <div class="paper-side paper-front">
+                    <div class="spiral-binding"></div>
+                    
+                    <div class="document-body">
+                        <div class="text-line width-80"></div>
+                        <div class="text-line width-100"></div>
+                        <div class="text-line width-90"></div>
+                        <div class="text-line width-100"></div>
+                    </div>
+
+                    <div class="paper-content">
+                        <svg class="writing-svg" viewBox="0 0 150 40" fill="none">
+                            <path id="write-path" d="M10,20 C30,5 50,30 70,10 C80,5 90,25 110,15 C120,10 130,20 140,5" 
+                                  stroke="#0f172a" stroke-width="2" stroke-linecap="round" fill="none" />
+                        </svg>
+                    </div>
+
+                    <div id="penActor" class="pen-actor">
+                        <div class="pen-body"></div>
+                        <div class="pen-tip"></div>
+                    </div>
+                </div>
+
+                <div class="paper-side paper-back">
+                    <div class="verified-content">
+                        <div class="check-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                        </div>
+                        <div class="verified-title">SUCCESSFULLY VERIFIED</div>
+                        <div class="verified-sub">Warranty Approved</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+
+        // ==========================================
+        // INTRO ANIMATION SEQUENCE
+        // ==========================================
+        window.addEventListener('load', () => {
+            const introScreen = document.getElementById('intro-screen');
+            const introText = document.querySelector('.intro-text');
+            const mainCard = document.querySelector('.verify-card');
+            
+            // 1. Logo Animation chal raha hai CSS se...
+            
+            // 2. Logo ke baad Text lao (1.5 seconds baad)
+            setTimeout(() => {
+                introText.classList.add('active');
+            }, 1000);
+
+            // 3. Sab hatao aur Card kheench ke lao (3.5 seconds baad)
+            setTimeout(() => {
+                introScreen.style.opacity = '0';
+                
+                // Card Animation Trigger
+                mainCard.classList.add('animate-entry');
+                
+                // Remove Intro from DOM
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                }, 600);
+                
+            }, 3500);
+        });
+        // 1. URL se Parameters nikalne ka function
+        const urlParams = new URLSearchParams(window.location.search);
+
+// 2. Data ko URL se uthana (agar URL mein nahi hai toh default dikhayega)
+        const warrantyData = {
+            ref: urlParams.get('ref') || "NOT-FOUND",
+            client: urlParams.get('name') || "Valued Customer",
+            company: urlParams.get('org') || "Innolab Instruments",
+            period: urlParams.get('period') || "12 Months",
+            startDate: urlParams.get('start') || "TBD",
+            endDate: urlParams.get('end') || "TBD"
+        };
+
+        // DOM Elements
+        const btnVerify = document.getElementById('btnVerify');
+        const statusBox = document.getElementById('statusMessage');
+        const overlay = document.getElementById('successOverlay');
+
+        // ==========================================
+        // 2. INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate UI
+            document.getElementById('disp_ref').textContent = warrantyData.ref;
+            document.getElementById('disp_client').textContent = warrantyData.client;
+            document.getElementById('disp_company').textContent = warrantyData.company;
+            document.getElementById('disp_period').textContent = warrantyData.period;
+            
+            // New Date Fields
+            document.getElementById('disp_start').textContent = warrantyData.startDate;
+            document.getElementById('disp_end').textContent = warrantyData.endDate;
+            
+            document.getElementById('overlay_client_text').textContent = `Claimant: ${warrantyData.client}`;
+
+            // Check LocalStorage (Agar pehle se claim ho chuka hai)
+            const storageKey = `warranty_verified_${warrantyData.ref}`;
+            const isVerified = localStorage.getItem(storageKey);
+
+            if (isVerified) {
+                // 1. Button Gayab karo
+                btnVerify.style.display = 'none';
+
+                // 2. Status Box ko "Success Card" jaisa dikhao
+                statusBox.style.display = 'block';
+                // Green Colors manually set kar rahe hain taaki pakka Green dikhe
+                statusBox.style.background = "#dcfce7"; 
+                statusBox.style.color = "#15803d";
+                statusBox.style.border = "1px solid #22c55e";
+                statusBox.style.padding = "20px";
+                
+                // Message with Checkmark
+                statusBox.innerHTML = `
+                    <div style="font-size: 24px; margin-bottom: 10px;">✅</div>
+                    <div style="font-size: 16px; font-weight: 700;">WARRANTY ACTIVE</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
+                        Verified on ${new Date().toLocaleDateString()}
+                    </div>
+                `;
+            }
+        });
+
+        // ==========================================
+        // 3. VERIFICATION LOGIC
+        // ==========================================
+        // ==========================================
+        // 3. CLEAN VERIFICATION LOGIC (Signature Only)
+        // ==========================================
+        // ==========================================
+        // 3. NOTEBOOK & PEN VERIFICATION LOGIC
+        // ==========================================
+        function handleVerification() {
+            // --- ELEMENTS SELECT KARNA ---
+            const btnVerify = document.getElementById('btnVerify');
+            const mainCard = document.querySelector('.verify-card'); // Pura Card
+            const overlay = document.getElementById('successOverlay'); // Notebook Scene
+            const flipper = document.getElementById('notebookFlipper'); // 3D Flipper
+            const pen = document.getElementById('penActor'); // Pen
+            const writingContainer = document.querySelector('.paper-content'); // Ink Area
+            const statusBox = document.getElementById('statusMessage'); // Status Message Area
+
+            // --- STEP 1: CARD GAYAB KARO ---
+            btnVerify.disabled = true;
+            btnVerify.innerHTML = "Processing...";
+            
+            // Card Fade Out Class lagao
+            mainCard.classList.add('card-faded-out');
+
+            // --- STEP 2: NOTEBOOK SCENE LAO (600ms baad) ---
+            setTimeout(() => {
+                // Overlay show karo
+                overlay.classList.add('active');
+
+                // 2.1 Pen Aaya
+                setTimeout(() => {
+                    pen.classList.add('sequence-start');
+
+                    // 2.2 Writing Start hui
+                    setTimeout(() => {
+                        pen.classList.add('sequence-write');
+                        writingContainer.classList.add('writing-now');
+
+                        // 2.3 Writing Khatam + Flip Logic
+                        setTimeout(() => {
+                            // Pen ko chupao (Flip se pehle)
+                            pen.classList.add('hide-pen'); 
+                            
+                            // FLIP KARO (Notebook palat jayegi)
+                            setTimeout(() => {
+                                flipper.classList.add('do-flip');
+                                
+                                // LocalStorage mein save kar lo
+                                const storageKey = `warranty_verified_${warrantyData.ref}`;
+                                localStorage.setItem(storageKey, 'true');
+                                
+                            }, 300); // Pen hatne ke turant baad flip
+
+                        }, 2000); // 2 second likhne mein lagega
+
+                    }, 800); // Pen aane ke baad wait
+
+                }, 500); // Overlay aane ke baad wait
+
+                // --- STEP 3: FINAL - CARD WAPAS LAO (Sab hone ke baad) ---
+                // Total Animation Time: approx 6.5 seconds
+                setTimeout(() => {
+                    // Email bhejo (Background mein)
+                    triggerEmail();
+
+                    // 3.1 Notebook ko hatao
+                    overlay.classList.remove('active');
+                    
+                    // 3.2 Card ka CONTENT badal do (Jab wo chupa hua hai)
+                    // Button hatao
+                    btnVerify.style.display = 'none';
+                    
+                    // Status Message dikhao (Updated)
+                    statusBox.style.display = 'block';
+                    statusBox.innerHTML = "✅ Warranty Successfully Verified & Claimed.";
+                    statusBox.classList.add('status-closed'); // Green/Grey styling
+                    statusBox.style.color = "#15803d"; // Success Green Color
+                    statusBox.style.background = "#dcfce7";
+                    statusBox.style.borderColor = "#22c55e";
+
+                    // 3.3 Main Card ko WAPAS LAO (Fade In + POP Effect + CELEBRATION)
+            setTimeout(() => {
+                mainCard.classList.remove('card-faded-out');
+                mainCard.classList.add('card-success-pop'); 
+                
+                // --- NEW ADDITIONS ---
+                
+                // 1. Mobile Vibration (Haptic Feedback)
+                if (navigator.vibrate) {
+                    navigator.vibrate([100, 50, 100]); // "Bzz-bzz" effect
+                }
+
+                // 2. Confetti Blast (Celebration)
+                var count = 200;
+                var defaults = {
+                    origin: { y: 0.7 }
+                };
+
+                function fire(particleRatio, opts) {
+                    confetti(Object.assign({}, defaults, opts, {
+                        particleCount: Math.floor(count * particleRatio)
+                    }));
+                }
+
+                fire(0.25, { spread: 26, startVelocity: 55 });
+                fire(0.2, { spread: 60 });
+                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+                fire(0.1, { spread: 120, startVelocity: 45 });
+                // ---------------------
+
+            }, 500);
+
+                }, 6500); // Pura show khatam hone ka time
+
+            }, 600); // Card gayab hone ka wait
+        }
+        // ==========================================
+        // 4. EMAIL TRIGGER
+        // ==========================================
+        function triggerEmail() {
+            const recipient = "support@innolab.com";
+            const subject = `Warranty Claim Verified – ${warrantyData.ref}`;
+            
+            const body = `Warranty has been successfully verified.\n\n` +
+                         `Claimant Name: ${warrantyData.client}\n` +
+                         `Organization: ${warrantyData.company}\n` +
+                         `Reference No: ${warrantyData.ref}\n` +
+                         `Warranty Period: ${warrantyData.period}\n` +
+                         `Start Date: ${warrantyData.startDate}\n` +
+                         `End Date: ${warrantyData.endDate}\n\n` +
+                         `[System Generated Verification]`;
+
+            window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        // ==========================================
+        // 5. SESSION LOCK
+        // ==========================================
+        function disableSession(message) {
+            statusBox.style.display = 'block';
+            statusBox.textContent = message;
+            
+            if (message.includes("already")) {
+                statusBox.classList.add('status-error');
+            } else {
+                statusBox.classList.add('status-closed');
+            }
+            btnVerify.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
